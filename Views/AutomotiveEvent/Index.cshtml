@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "Automotive Marketing";
+}
+
+<div class="mobile-content">
+    <table class="mobile-monitor">
+        <tr>
+            <td>
+                <img id="imgStatus" src="/images/auto_normal.png" data-normal="/images/auto_normal.png" data-renew="/images/auto_renew.png" alt="car" />
+            </td>
+        </tr>
+        <tr>
+            <td class="mobile-monitor-action">
+                <p style="margin-top:25%;">
+                    <label id="lblMilage" style="margin:0px;"></label>
+                    <input type="hidden" id="milage" value="20000">
+                </p>
+                <div id="milageSlider" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
+                    <div class="ui-slider-range ui-corner-all ui-widget-header ui-slider-range-min" style="width: 5.15021%;">
+                    </div><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 5.15021%;"></span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="lblMessage" style="margin-top:25%;">&nbsp;</div>
+                <input id="btnSend" type="button" value="Start Sending Data" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        var urlAction = '/AutomotiveEvent/SendData';
+        var isSentData = false;
+        var startProcess, btnText, btnBgColor;
+
+        $(function () {
+            $('#spinner').hide();
+            $("#lblMilage").text('Car Milage: ' + $("#milage").val());
+            $('#lblMessage').addClass('default-status-message').html('&nbsp;');
+
+            $("#milageSlider").slider({
+                range: "min",
+                value: 20000,
+                min: 20000,
+                max: 40000,
+                slide: function (event, ui) {
+                    $("#imgStatus").attr('src', function () {
+                        if (ui.value > 30000) {
+                            return $(this).attr('data-renew');
+                        }
+                        else {
+                            return $(this).attr('data-normal');
+                        }
+                    });
+                    $("#lblMilage").text('Car Milage: ' + ui.value);
+                    $("#milage").val(ui.value);
+                }
+            });
+
+            $('#btnSend').on('click', function (e) {
+                isSentData = !isSentData;
+                btnText = btnBgColor = undefined;
+
+                if (isSentData && startProcess == undefined) {
+                    $('#lblMessage').css({ 'background-color': '' }).html('&nbsp;');
+                    startSendingData();
+                    startProcess = setInterval(function () { startSendingData() }, 5000);
+                }
+                else {
+                    stopSendingData();
+                }
+            });
+        });
+
+        function stopSendingData() {
+            isSentData = false;
+            if (startProcess) {
+                clearInterval(startProcess);
+                startProcess = undefined;
+            }
+            if ($) {
+                $('#btnSend').attr('value', 'Start Sending Data');
+                $('#lblMessage').css({ 'background-color': '' }).html('&nbsp;');
+                $('#spinner').hide();
+            }
+        }
+
+        function startSendingData() {
+            if (startProcess && isSentData)
+                return;
+            isSentData = true;
+            if (isSentData && $ && $("#milage").val().length > 0) {
+                $('#btnSend').attr('value', (isSentData ? 'Stop Sending Data' : 'Start Sending Data'));
+                var milageVal = parseInt($("#milage").val());
+                $('#spinner').show();
+                $.post(urlAction, { milage: milageVal }, function (data) {
+                    isSentData = false;
+                    $('#spinner').hide();
+                    if (data) {
+                        console.log(data);
+                        if (data.toLowerCase().indexOf("completed") != -1) {
+                            btnBgColor = "green";
+                            btnText = "Completed Successfully";
+                            stopSendingData();
+                        }
+                    }
+
+                    if (btnText && btnBgColor) {
+                        $('#lblMessage').css({
+                            'background-color': btnBgColor,
+                        }).html(btnText);
+                        return;
+                    }
+                    else {
+                        $('#lblMessage').addClass('default-status-message').html('&nbsp;');
+                    }
+                });
+            }
+        }
+    </script>
+}
