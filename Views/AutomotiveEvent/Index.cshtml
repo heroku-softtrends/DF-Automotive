@@ -11,9 +11,9 @@
         </tr>
         <tr>
             <td class="mobile-monitor-action">
-                <p style="margin-top:25%;">
+                <p style="margin-top:20%;">
                     <label id="lblMilage" style="margin:0px;"></label>
-                    <input type="hidden" id="milage" value="20000">
+                    <input type="hidden" id="milage" value="22365">
                 </p>
                 <div id="milageSlider" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
                     <div class="ui-slider-range ui-corner-all ui-widget-header ui-slider-range-min" style="width: 5.15021%;">
@@ -23,8 +23,8 @@
         </tr>
         <tr>
             <td>
-                <div id="lblMessage" style="margin-top:25%;">&nbsp;</div>
-                <input id="btnSend" type="button" value="Start Sending Data" />
+                <div id="lblMessage" style="auto">&nbsp;</div>
+                <input id="btnSend" type="button" value="Start Sending Data" class="btn-custom"/>
             </td>
         </tr>
     </table>
@@ -38,12 +38,12 @@
 
         $(function () {
             $('#spinner').hide();
-            $("#lblMilage").text('Car Milage: ' + $("#milage").val());
+            $("#lblMilage").text('Vehicle Odometer: ' + $("#milage").val());
             $('#lblMessage').addClass('default-status-message').html('&nbsp;');
 
             $("#milageSlider").slider({
                 range: "min",
-                value: 20000,
+                value: 22365,
                 min: 20000,
                 max: 40000,
                 slide: function (event, ui) {
@@ -55,7 +55,7 @@
                             return $(this).attr('data-normal');
                         }
                     });
-                    $("#lblMilage").text('Car Milage: ' + ui.value);
+                    $("#lblMilage").text('Vehicle Odometer: ' + ui.value);
                     $("#milage").val(ui.value);
                 }
             });
@@ -95,7 +95,7 @@
             if (isSentData && $ && $("#milage").val().length > 0) {
                 $('#btnSend').attr('value', (isSentData ? 'Stop Sending Data' : 'Start Sending Data'));
                 var milageVal = parseInt($("#milage").val());
-                $('#spinner').show();
+                $('#spinner').hide();
                 $.post(urlAction, { milage: milageVal }, function (data) {
                     isSentData = false;
                     $('#spinner').hide();
