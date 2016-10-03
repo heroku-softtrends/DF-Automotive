@@ -28,7 +28,7 @@ namespace DemoDFAutomotive.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<JsonResult> SendData(int milage)
+        public async Task<JsonResult> SendData(int mileage)
         {
             try
             {
@@ -37,7 +37,36 @@ namespace DemoDFAutomotive.Controllers
                     IronMQMessage ironMQMessage = null;
                     IOTEventRequest eventRequest = new IOTEventRequest();
                     eventRequest.VIN = ConfigVars.Instance.VIN;
-                    eventRequest.mileage = milage;
+                    eventRequest.mileage = mileage;
+                    eventRequest.errorCode = "None";
+                    eventRequest.lifetimeMpg = 18;
+                    eventRequest.lifetimeDrivingTime = 398;
+                    eventRequest.lifetimeEcoTime = 93;
+                    eventRequest.trip = new IOTTrip()
+                    {
+                        id = 644,
+                        suspensionWeight = 432,
+                        brakeEvents = 93,
+                        avgSpeed = 36,
+                        length = 50,
+                        duration = 40,
+                        mpg = 15,
+                        ecoTime = 19,
+                        passengerCount = 2,
+                        currentRange = 234,
+                        childLock = 3,
+                        gpsActive = true,
+                        climateControlTarget = 68,
+                        climateControlEnergyUse = 4,
+                        internalTemp = 71,
+                        externalTemp = 82,
+                        oilLife = 43,
+                        driverAlert = "None",
+                        serviceNeeded = "None",
+                        latitude = 23,
+                        longitude = 23
+                    };
+
                     httpClient1.DefaultRequestHeaders.Accept.Clear();
                     httpClient1.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     httpClient1.DefaultRequestHeaders.Add("Authorization", ConfigVars.Instance.IOTToken);
@@ -80,8 +109,8 @@ namespace DemoDFAutomotive.Controllers
                                     {
                                         if (ironMQMessage != null)
                                         {
-                                                //delete iron queue message after reading
-                                                DeleteIronMessageByID(ironMQMessage.id, ironMQMessage.reservation_id);
+                                            //delete iron queue message after reading
+                                            DeleteIronMessageByID(ironMQMessage.id, ironMQMessage.reservation_id);
                                         }
                                     });
                                 }

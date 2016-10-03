@@ -12,10 +12,10 @@
         <tr>
             <td class="mobile-monitor-action">
                 <p style="margin-top:20%;">
-                    <label id="lblMilage" style="margin:0px;"></label>
-                    <input type="hidden" id="milage" value="22365">
+                    <label id="lblMileage" style="margin:0px;"></label>
+                    <input type="hidden" id="mileage" value="22365">
                 </p>
-                <div id="milageSlider" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
+                <div id="slider-range-min" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
                     <div class="ui-slider-range ui-corner-all ui-widget-header ui-slider-range-min" style="width: 5.15021%;">
                     </div><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 5.15021%;"></span>
                 </div>
@@ -33,36 +33,41 @@
 @section Scripts{
     <script type="text/javascript">
         var urlAction = '/AutomotiveEvent/SendData';
-        var isSentData = false;
+        var isSentData = false, httpRequestLimit = 30, httpRequestCount = 0;
         var startProcess, btnText, btnBgColor;
 
         $(function () {
             $('#spinner').hide();
-            $("#lblMilage").text('Vehicle Odometer: ' + $("#milage").val());
             $('#lblMessage').addClass('default-status-message').html('&nbsp;');
 
-            $("#milageSlider").slider({
+            $("#slider-range-min").slider({
                 range: "min",
                 value: 22365,
                 min: 20000,
                 max: 40000,
                 slide: function (event, ui) {
+                    var mileage = ui ? ui.value : 22365;
                     $("#imgStatus").attr('src', function () {
-                        if (ui.value > 30000) {
+                        if (mileage > 30000) {
                             return $(this).attr('data-renew');
                         }
                         else {
                             return $(this).attr('data-normal');
                         }
                     });
-                    $("#lblMilage").text('Vehicle Odometer: ' + ui.value);
-                    $("#milage").val(ui.value);
+                    $("#lblMileage").text('Vehicle Odometer: ' + mileage);
+                    $("#mileage").val(mileage);
                 }
             });
 
+            $slider = $('#slider-range-min');
+            if ($slider) {
+                $slider.slider('option', 'slide').call($slider);
+            }
             $('#btnSend').on('click', function (e) {
                 isSentData = !isSentData;
                 btnText = btnBgColor = undefined;
+                httpRequestCount = 0;
 
                 if (isSentData && startProcess == undefined) {
                     $('#lblMessage').css({ 'background-color': '' }).html('&nbsp;');
@@ -77,6 +82,7 @@
 
         function stopSendingData() {
             isSentData = false;
+            httpRequestCount = 0;
             if (startProcess) {
                 clearInterval(startProcess);
                 startProcess = undefined;
@@ -92,11 +98,12 @@
             if (startProcess && isSentData)
                 return;
             isSentData = true;
-            if (isSentData && $ && $("#milage").val().length > 0) {
+            httpRequestCount++;
+            if (isSentData && $ && $("#mileage").val().length > 0) {
                 $('#btnSend').attr('value', (isSentData ? 'Stop Sending Data' : 'Start Sending Data'));
-                var milageVal = parseInt($("#milage").val());
+                var mileageVal = parseInt($("#mileage").val());
                 $('#spinner').hide();
-                $.post(urlAction, { milage: milageVal }, function (data) {
+                $.post(urlAction, { mileage: mileageVal }, function (data) {
                     isSentData = false;
                     $('#spinner').hide();
                     if (data) {
@@ -116,6 +123,10 @@
                     }
                     else {
                         $('#lblMessage').addClass('default-status-message').html('&nbsp;');
+                    }
+
+                    if (httpRequestCount == httpRequestLimit) {
+                        stopSendingData();
                     }
                 });
             }

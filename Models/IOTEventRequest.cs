@@ -9,7 +9,7 @@ namespace DemoDFAutomotive.Models
     {
         public string VIN { get; set; }
         public int mileage { get; set; }
-        public string error_code { get; set; }
+        public string errorCode { get; set; }
         public int lifetimeMpg { get; set; }
         public int lifetimeDrivingTime { get; set; }
         public int lifetimeEcoTime { get; set; }
