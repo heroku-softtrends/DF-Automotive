@@ -1,0 +1,33 @@
+{
+  "name": "DF'16 Automotive Sales Demo",
+  "description": "IOT Cloud ingesting Leased Vehicle Mileage data from a Heroku Connected App",
+  "repository": "https://github.com/heroku-softtrends/DF-Automotive",
+  "logo": "https://s3.amazonaws.com/herokumximages/heroku.png",
+  "keywords": ["ASP.NET", "IOT", "Dreamforce", "Thunder", "Kafka"],
+
+  "env": {
+    "VIN": {
+        "description": "We will generate a unique VIN for your vehicle",
+        "generator": "secret"},
+    "iotToken": {
+        "description": "Bearer Token required by IOT Cloud to send messages",
+        "value": "Bearer iguZgpnIwr8N60cD7cYgSMbYQm9QZXEY9AaqmeD6f4d2DoyvZNEhcQdzGSSFivDylWcXR5ShTu1AfMSCJi9sAj"},
+    "endpointURL": {
+        "description": "IOT Cloud Endpoint URL for ingestion",
+        "value": "https://ingestion-xcdvudaz0dz3.us3.sfdcnow.com/streams/automotive_sales_001/car_events001/event"},
+    "IRON_MQ_PROJECT_ID": {
+        "description": "Heroku IronMQ Project ID for return messages from IOT Cloud ",
+        "value": "57dbdea41e0aa6000858dbae"},
+    "IRON_MQ_TOKEN": {
+        "description": "Heroku IronMQ Token for return messages from IOT Cloud ",
+        "value": "pqYbPAL1MN3mf5PyBu2S"},
+     "queueURL": {
+        "description": "Heroku IronMQ Queue for return messages from IOT Cloud ",
+        "value": "https://mq-aws-eu-west-1-1.iron.io/3/projects/57dbdea41e0aa6000858dbae/queues/automotive_messages"}
+    },
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku-softtrends/dotnetcore.main"
+    }
+  ]
+}
