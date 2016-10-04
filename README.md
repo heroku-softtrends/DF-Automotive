@@ -13,7 +13,7 @@
 
 - `VIN` - identifies the Heroku App to IOT Cloud as a "unique Leased Automobile" and must be unique
 - `iotToken` - allows IOT Cloud to authorize incoming messages to its Endpoint
-- `endpointURL` - URL the Heroku App uses to send "iBeacon Proximity data to trigger Marketing event" (aka the IOT Endpoint)
+- `endpointURL` - URL the Heroku App uses to send "Odometer data to trigger a promotional sales event" (aka the IOT Endpoint)
 - `IRON_MQ_PROJECT_ID` - allows the Heroku MQ listener to know where incoming messages should be stored (where its queues live)
 - `IRON_MQ_TOKEN` - allows the Heroku MQ to authorize incoming messages from IOT Cloud to its Queue Endpoint
 - `queueURL` - URL the IOT Cloud Orchestration uses to send "iBeacon Proximity data to trigger Marketing event" (aka the Heroku App Endpoint)
